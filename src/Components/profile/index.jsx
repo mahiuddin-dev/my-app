@@ -3,46 +3,48 @@ import "./style.css";
 import Bio from './bio';
 import Skills from './skills';
 import Links from './links';
+import axios from 'axios';
+import {useState,useEffect} from 'react';
 
-
-class Profile extends React.Component{
-    data = {
-        name: "Sebastian",
-        bio: "lorem"
-    }
-    listitems = {
-        listitems: ["Spring", "Summer", "Fall"]
-    };
-    social = {
-        sociallink:[
-            {
-                link:'https://google.com',
-                name:'Google'
-            },
-            {
-                link:'https://facebook.com',
-                name:'Facebook'
-            },
-            {
-                link:'https://twitter.com',
-                name:'Twitter'
-            },
-
-        ]
-    }
+function Profile (){
     
-    render(){
-        return(
-            <div className="Container">
-                <div className="wrap">
-                    <Bio name={this.data.name} title='lorem' />
-                    <Skills listitems={this.listitems} />
-                    <Links social={this.social} />
-                </div>
-           
-            </div>
-        )
-    }
+    const [persons, setPerson] = useState([])
+
+    useEffect(()=>{
+        async function getPerson() {
+            try{
+                const person = await axios.get('https://djangoreact2022.herokuapp.com/api/');
+                setPerson(person.data);
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        getPerson()
+    },[])
+
+ 
+    return(
+        <div className="Container">
+            {
+                
+                persons.map((person,index)=>{
+              
+                    return (
+                        <div className="wrap">
+                           <Bio name={person.name} title={person.title} />
+                            <Skills listitems={person.skills} />
+                            <Links social={person.social_media} />
+                           
+                        </div>
+                    )
+                    
+                }
+                
+                )
+            }
+        </div>
+    )
 }
 
 export default Profile;
